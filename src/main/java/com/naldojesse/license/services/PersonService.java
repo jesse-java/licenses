@@ -4,6 +4,7 @@ import com.naldojesse.license.models.Person;
 import com.naldojesse.license.repositories.PersonRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -13,16 +14,16 @@ public class PersonService {
         this.personRepository = personRepository;
     }
 
+    public List<Person> allPersons() {
+        return personRepository.findAll();
+    }
+
     public void addPerson(Person person) {
         personRepository.save(person);
     }
 
-//    public void addPerson(String first_name, String last_name) {
-//        personRepository.save();
-//    }
-//
-//    public Optional<Person> findPersonById(Long id) {
-//        return personRepository.findById(id);
-//    }
+    public Optional<Person> findPersonById(Long id) {
+        return personRepository.findById(id);
+    }
 
 }

@@ -7,17 +7,19 @@ import com.naldojesse.license.services.PersonService;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.ui.Model;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class LicenseController {
+
     private final PersonService personService;
     private final LicenseService licenseService;
-//    public LicenseController(PersonService personService) {
-//        this.personService = personService;
-//    }
     public LicenseController(PersonService personService, LicenseService licenseService) {
         this.personService = personService;
         this.licenseService = licenseService;
@@ -40,19 +42,34 @@ public class LicenseController {
     }
 
     @RequestMapping("/licenses/new")
-    public String new_license(@ModelAttribute("license") License license) {
+    public String new_license(@ModelAttribute("license") License license, Model model) {
+        List<Person> persons = personService.allPersons();
+        model.addAttribute("persons", persons);
         return "license_new.jsp";
     }
 
-//    @RequestMapping("/persons/{id}")
-//    public String show_person() {
-//        return;
-//    }
+    @RequestMapping("/persons/{id}")
+    public String findPersonByIndex(Model model, @PathVariable("id") Long index) {
+        Optional<Person> person = personService.findPersonById(index);
+        if (person.isPresent()) {
+            model.addAttribute("person", person.get());
+        } else {
+            return "redirect:/persons/new";
+        }
+        return "person_view.jsp";
+    }
 
     @RequestMapping("/licenses/create")
-    public String create_license(@Valid @ModelAttribute("license") License license) {
-
-        return "";
+    public String create_license(@Valid @ModelAttribute("license") License license, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            List<Person> persons = personService.allPersons();
+            model.addAttribute("persons", persons);
+            return "license_new.jsp";
+        } else {
+            System.out.println("working");
+            licenseService.addLicense(license);
+            return "redirect:/licenses/new";
+        }
     }
 }
 //}

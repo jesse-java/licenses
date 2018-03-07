@@ -8,5 +8,4 @@ import java.util.Date;
 
 @Repository
 public interface LicenseRepository extends CrudRepository<License, Long>{
-//    void save(String number, String state, Date expiration_date);
 }
